@@ -1,5 +1,7 @@
 # Mail Link Bot
 
+<p align="center"><img src="build/icon.png" width="128" alt="Mail Link Bot simgesi"></p>
+
 Gmail'i belirlediğiniz filtreyle tarar, maillerdeki bağlantıları çıkarır, seçtiğiniz
 bağlantı zincirini izler, son sayfadan bir HTML elemanının değerini okur ve bunu
 **Telegram**'a (grup ya da kişisel sohbet) gönderir. Tüm akış **tarif** olarak
@@ -16,12 +18,16 @@ Gereksinim: Node.js 20+.
 
 ### Tek dosyalık exe (Windows)
 
+Hazır exe için [Releases](https://github.com/SonerKeser/MailLinkBot/releases) sayfasına
+bakın. Kendiniz derlemek için:
+
 ```bash
 npm run dist
 ```
 
-Çıktı: `dist\MailLinkBot-<sürüm>-portable.exe` — kurulum gerektirmeyen, tek dosyalık
-taşınabilir uygulama (yaklaşık 70 MB).
+Çıktı: `dist\MailLinkBot-<sürüm>-portable.exe` — kurulum (setup) gerektirmeyen, tek
+dosyalık taşınabilir uygulama (yaklaşık 70 MB). Yalnızca portable hedef tanımlıdır;
+kurulum paketi üretilmez.
 
 - Her açılışta geçici klasöre açıldığı için ilk pencere birkaç saniye geç gelebilir.
 - Kod imzalı olmadığından Windows SmartScreen "Bilinmeyen yayıncı" uyarısı verebilir
@@ -111,3 +117,13 @@ kopyalarsanız bilgileri yeniden girmeniz gerekir. Bu bilgiler depoya hiçbir za
 
 İpucu: "Bağlantıyı Test Et" butonu, forma yazdığınız (henüz kaydedilmemiş)
 bilgilerle de test yapar; kalıcı olması için yine de **Kaydet**'e basın.
+
+## Simge
+
+Simge `build/make-icon.js` ile üretilir (`npm run icon`): SVG, her boyutta ayrı çizilir
+(küçük boyutlarda ayrıntı azaltılır) ve `build/icon.ico` ile `build/icon.png` dosyalarına
+yazılır.
+
+## Lisans
+
+[MIT](LICENSE) © 2026 Soner Keser
