@@ -1,0 +1,60 @@
+{
+  "name": "mail-link-bot",
+  "productName": "Mail Link Bot",
+  "version": "0.1.0",
+  "description": "Gmail filtresiyle mail tara, bağlantı zincirini izle, sayfadan değer çek, Telegram'a gönder",
+  "author": "Soner Keser",
+  "homepage": "https://github.com/SonerKeser/MailLinkBot#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SonerKeser/MailLinkBot.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SonerKeser/MailLinkBot/issues"
+  },
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --publish never"
+  },
+  "build": {
+    "appId": "com.maillinkbot.app",
+    "productName": "Mail Link Bot",
+    "copyright": "Copyright © 2026 Soner Keser",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "webview-preload.js",
+      "src/**/*",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "electronLanguages": [
+      "tr",
+      "en-US"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "MailLinkBot-${version}-portable.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "imapflow": "^1.0.160",
+    "mailparser": "^3.7.0"
+  }
+}

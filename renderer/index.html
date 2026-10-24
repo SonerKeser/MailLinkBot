@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Mail Link Bot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header id="topbar">
+  <div class="brand">
+    <span class="logo">▤</span>
+    <h1>MAIL LINK BOT</h1>
+  </div>
+  <nav>
+    <button class="tab active" data-tab="wizard">Sihirbaz</button>
+    <button class="tab" data-tab="recipes">Tarifler &amp; Loglar</button>
+    <button class="tab" data-tab="settings">Ayarlar</button>
+  </nav>
+  <div id="tgBadge" class="badge off">Telegram: —</div>
+</header>
+
+<!-- ============ SİHİRBAZ ============ -->
+<main id="tab-wizard" class="tabpage active">
+  <aside class="left">
+
+    <section class="card">
+      <h2><span class="stepno">1</span> Mail Filtresi</h2>
+      <form id="filterForm">
+        <label>Konuda geçen ifade
+          <input id="fSubject" placeholder="örn: Sipariş onayı">
+        </label>
+        <label>Gönderen (isteğe bağlı)
+          <input id="fFrom" placeholder="örn: noreply@site.com">
+        </label>
+        <label>İçerikte geçen (isteğe bağlı)
+          <input id="fBody" placeholder="örn: doğrulama">
+        </label>
+        <div class="row">
+          <label class="inline">Son
+            <select id="fDays">
+              <option value="1">1 gün</option>
+              <option value="7" selected>7 gün</option>
+              <option value="30">30 gün</option>
+              <option value="90">90 gün</option>
+            </select>
+          </label>
+          <label class="inline check"><input type="checkbox" id="fUnseen"> Sadece okunmamış</label>
+        </div>
+        <button type="submit" id="btnSearch" class="primary wide">Mailleri Tara</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2><span class="stepno">2</span> Eşleşen Mailler <span id="mailCount" class="count"></span></h2>
+      <ul id="mailList" class="list"><li class="empty">Önce tarama yapın</li></ul>
+    </section>
+
+    <section class="card grow">
+      <h2><span class="stepno">3</span> Bağlantılar &amp; Butonlar <span id="linkCount" class="count"></span></h2>
+      <div id="linkHint" class="hint">Bir mail seçince bağlantıları burada listelenir</div>
+      <ul id="linkList" class="list links"></ul>
+    </section>
+
+  </aside>
+
+  <section class="right">
+    <div class="toolbar">
+      <div id="chainCrumbs" class="crumbs"></div>
+      <span class="spacer"></span>
+      <button id="btnChainBack" title="Bir adım geri">↶ Geri</button>
+      <button id="btnPick" title="Sayfada tıklayarak eleman seç">◎ Eleman Seç</button>
+    </div>
+    <div class="urlbar"><span class="mono" id="pageUrl">sayfa açılmadı</span></div>
+
+    <div id="viewWrap">
+      <div id="viewPlaceholder">
+        <div class="ph-icon">⛓</div>
+        <p>Soldaki listeden bir bağlantı açın.<br>
+        <small>Otomasyon kaydının doğru olması için bağlantıları hep soldaki listeden seçin; sayfa içinde elle gezinmeyin.</small></p>
+      </div>
+    </div>
+
+    <section class="card extract">
+      <h2><span class="stepno">4</span> Değer Oku &amp; Gönder</h2>
+      <div class="row">
+        <input id="selInput" class="mono grow" placeholder="CSS seçici — örn: #fiyat, .kod > span, td:nth-of-type(2)">
+        <select id="selMode">
+          <option value="text">Metin</option>
+          <option value="html">HTML</option>
+          <option value="attr">Öznitelik</option>
+        </select>
+        <input id="selAttr" class="mono w120 hidden" placeholder="öznitelik adı">
+        <button id="btnTestSel" class="primary">Değeri Oku</button>
+      </div>
+      <div class="row valrow">
+        <span class="lbl">DEĞER</span>
+        <output id="valueOut" class="mono">—</output>
+      </div>
+      <div class="row">
+        <input id="tgChatId" class="mono w160" list="tgChatOptions" placeholder="Chat ID — örn: -1001234567890">
+        <datalist id="tgChatOptions"></datalist>
+        <button id="btnTgChats" title="Botun görebildiği sohbet ve grupları listele">📋 Sohbetleri Bul</button>
+        <input id="msgTemplate" class="grow" value="{value}" title="Kullanılabilir alanlar: {value} {subject} {url} {name} {date}">
+        <button id="btnSendNow" class="primary">Şimdi Gönder</button>
+      </div>
+      <div class="row recipe-row">
+        <input id="recipeName" class="grow" placeholder="Tarif adı — örn: Sipariş kodu takibi">
+        <label class="inline">Her <input id="recipeInterval" type="number" min="1" value="10" class="w60"> dk kontrol</label>
+        <label class="inline check"><input type="checkbox" id="recipeEnabled" checked> Otomatik</label>
+        <button id="btnSaveRecipe">💾 Tarif Olarak Kaydet</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<!-- ============ TARİFLER & LOGLAR ============ -->
+<main id="tab-recipes" class="tabpage">
+  <section class="card">
+    <h2>Kayıtlı Tarifler</h2>
+    <div id="recipeEmpty" class="hint">Henüz tarif yok. Sihirbaz sekmesinde bir akış oluşturup "Tarif Olarak Kaydet" deyin.</div>
+    <div class="tablewrap">
+      <table id="recipeTable">
+        <thead>
+          <tr>
+            <th>Ad</th><th>Filtre</th><th>Zincir</th><th>Telegram</th><th>Aralık</th><th>Durum</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="recipeRows"></tbody>
+      </table>
+    </div>
+  </section>
+  <section class="card grow">
+    <h2>Loglar</h2>
+    <div id="logBox" class="logs"></div>
+  </section>
+</main>
+
+<!-- ============ AYARLAR ============ -->
+<main id="tab-settings" class="tabpage">
+  <div class="settings-grid">
+    <section class="card">
+      <h2>Gmail (IMAP)</h2>
+      <p class="hint">
+        Normal şifreniz değil, <b>uygulama şifresi</b> gerekir:
+        Google Hesabı → Güvenlik → 2 Adımlı Doğrulama'yı açın → "Uygulama şifreleri"nden
+        16 haneli şifre oluşturun.
+      </p>
+      <label>Gmail adresi <input id="setUser" type="email" placeholder="ornek@gmail.com"></label>
+      <label>Uygulama şifresi <input id="setPass" type="password" placeholder="abcd efgh ijkl mnop"></label>
+      <div id="gmailSaved" class="hint"></div>
+      <div class="row">
+        <button id="btnSaveSettings" class="primary">Kaydet</button>
+        <button id="btnTestMail">Bağlantıyı Test Et</button>
+        <span id="setStatus" class="hint"></span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Telegram Botu</h2>
+      <p class="hint">
+        Telegram'da <b>@BotFather</b>'a <span class="mono">/newbot</span> yazarak bir bot oluşturun ve
+        verdiği <b>API token</b>'ı buraya kaydedin. Botu, mesaj atılacak <b>gruba ekleyin</b> ve grupta
+        herhangi bir mesaj yazın; ardından Sihirbaz'daki <b>"Sohbetleri Bul"</b> butonu grubun
+        chat ID'sini bulur (grup ID'leri genellikle <span class="mono">-100…</span> ile başlar).
+      </p>
+      <label>Bot API token <input id="setTgToken" type="password" placeholder="123456789:AAF..."></label>
+      <div class="row">
+        <button id="btnSaveTg" class="primary">Kaydet</button>
+        <button id="btnTestTg">Botu Doğrula</button>
+        <span id="tgStatus" class="hint"></span>
+      </div>
+    </section>
+  </div>
+</main>
+
+<div id="toasts"></div>
+<script src="app.js"></script>
+</body>
+</html>
